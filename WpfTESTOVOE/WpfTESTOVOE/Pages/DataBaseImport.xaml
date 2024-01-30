@@ -1,0 +1,36 @@
+﻿<Page x:Class="WpfTESTOVOE.Pages.DataBaseImport"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfTESTOVOE.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="DataBaseImport">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="38*"/>
+            <RowDefinition Height="377*"/>
+            <RowDefinition Height="35*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Перенесенные файлы" Grid.Row="0" Grid.Column="0"/>
+        <Label Content="Импортируемые файлы" Grid.Row="0" Grid.Column="1"/>
+        <Label Content="Количество потоков" Grid.Row="0" Grid.Column="1" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Width="114"/>
+        <TextBox Name="Threadcount" Grid.Row="0" Grid.Column="2" Margin="10,0,0,0"/>
+        <ListBox Name="ListBoxFile" Grid.Row="1" Grid.Column="0" AllowDrop="True" Drop="Target_Drop">
+
+        </ListBox>
+
+        <DataGrid Name="GridDataBaseImportContent" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"   HeadersVisibility="Column"  CanUserDeleteRows="False" CanUserReorderColumns="False">
+            
+        </DataGrid>
+        <Button  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Content="Импорт"  Click="ImportData"/>
+
+    </Grid>
+</Page>
