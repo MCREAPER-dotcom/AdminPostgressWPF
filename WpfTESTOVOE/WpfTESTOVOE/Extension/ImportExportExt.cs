@@ -19,29 +19,28 @@ namespace WpfTESTOVOE
 {
     public class ImportExportExt
     {
-        public async static void RecordFile(string path, ThreadSafeObservableCollection<ModelExportElements> exportelements, ModelExportElements element)
+        public async static void RecordFileAsync(string path, ThreadSafeObservableCollection<ModelExportElements> exportelements, ModelExportElements element)
         {
             int strigcount = 0;
-            DataTable dt=await Task.Run(() => BDConnect.DataBaseTableConnect($"select * from {path}"));
-            StreamWriter swc = new StreamWriter($"{GetPath()}{path}.csv", false, Encoding.GetEncoding(1251));
+            DataTable dt = BDConnect.DataBaseTableConnect($"select * from {path}");
+            using StreamWriter swc = new StreamWriter($"{GetPath()}{path}.csv", false, Encoding.GetEncoding(1251));
             var columns = dt.Columns.Cast<DataColumn>();
             swc.WriteLine(string.Join(";", columns));
             strigcount++;
             int index = exportelements.IndexOf(element);
             exportelements.ChangeItem(index, new ModelExportElements(path, Convert.ToString(strigcount)));
-            swc.Close();
+
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                StreamWriter sw = new StreamWriter($"{GetPath()}{path}.csv", true, Encoding.GetEncoding(1251));
+                using StreamWriter sw = new StreamWriter($"{GetPath()}{path}.csv", true, Encoding.GetEncoding(1251));
                 sw.WriteLine(string.Join(";", dt.Rows[i].ItemArray));
                 strigcount++;
                 exportelements.ChangeItem(index, new ModelExportElements(path, Convert.ToString(strigcount)));
-                sw.Close();
             }
             dt.Clear();
             exportelements.ChangeItem(index, new ModelExportElements(path, Convert.ToString(strigcount),true));
         }
-        public async static void ImpoortFile(string path, string fileName, ThreadSafeObservableCollection<ModelImportElements> importelements, ModelImportElements element)
+        public async static void ImpoortFileAsync(string path, string fileName, ThreadSafeObservableCollection<ModelImportElements> importelements, ModelImportElements element)
         {
             using (NpgsqlConnection con = BDConnect.GetConnection())
             {
@@ -62,15 +61,15 @@ namespace WpfTESTOVOE
                 if (con.State == System.Data.ConnectionState.Open)
                 {
                     ///проверка на присутствие таблицы в бд
-                    NpgsqlDataReader reader = await Task.Run(() => BDConnect.GetCommand(con, $"select exists(select * from information_schema.tables where table_name='{fileName.Split('.')[1]}') AS table_existence;").ExecuteReader());
+                    NpgsqlDataReader reader = BDConnect.GetCommand(con, $"select exists(select * from information_schema.tables where table_name='{fileName.Split('.')[1]}') AS table_existence;").ExecuteReader();
                     
 
                     DataTable data = new DataTable();
                     data.Load(reader);
-                    if (data.Rows[0][0].ToString() == "True")
+                    if (Convert.ToBoolean(data.Rows[0][0]) == true)
                     {
                         ///опять же для ускорения разработки , роняю все связи, т.к. в задании не было указания о необходимости их сохранения
-                        await Task.Run(() => BDConnect.GetCommand(con, $"DROP TABLE {fileName} CASCADE").ExecuteReader());
+                        BDConnect.GetCommand(con, $"DROP TABLE {fileName} CASCADE").ExecuteReader();
 
                     }
                     await Task.Run(() => Insert(path,fileName, importelements,element));
@@ -109,7 +108,7 @@ namespace WpfTESTOVOE
                         string header2 = " '@" + header.Replace(";", "' , '@") + "'";
                         string header3 = header.Replace(";", " , ");
 
-                        await Task.Run(() => BDConnect.GetCommand(con, $"CREATE TABLE IF NOT EXISTS  {fileName}({header1});").ExecuteNonQuery());
+                        BDConnect.GetCommand(con, $"CREATE TABLE IF NOT EXISTS  {fileName}({header1});").ExecuteNonQuery();
 
                         string line;
                         string[] currentRow1;
@@ -123,6 +122,7 @@ namespace WpfTESTOVOE
                             string liner = line.Replace(";", " , ");
 
                             ///простая конструкция не хотела юзаться , которая line.splite(" , "), возможно из-за версии языка чуть ниже 8, хотя по документации должна работать
+                            ///StringSplitOptions.None + чекнуть кодировку фАЙЛА
                             currentRow2 = line.Split(new string[] { " , " }, StringSplitOptions.RemoveEmptyEntries).ToList()[0].Split(';').ToList();
 
                             int temprowcount = currentRow2.Count;
@@ -145,7 +145,7 @@ namespace WpfTESTOVOE
                                             ({tempRow})
                                     "
                             ;
-                            await Task.Run(() => BDConnect.GetCommand(con, sqlPersonInfo).ExecuteNonQuery());
+                            BDConnect.GetCommand(con, sqlPersonInfo).ExecuteNonQuery();
 
                             stringCount++;
                             importelements.ChangeItem(index, new ModelImportElements(fileName, Convert.ToString(stringCount), path));

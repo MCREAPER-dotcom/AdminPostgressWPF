@@ -27,32 +27,11 @@ namespace WpfTESTOVOE.Extension
             if (synchronizationContext == null)
                 throw new ArgumentNullException("synchronizationContext");
 
-            this.SynchronizationContext = synchronizationContext;
+            SynchronizationContext = synchronizationContext;
         }
-
-        protected override void ClearItems()
-        {
-            this.SynchronizationContext.Send(new SendOrPostCallback((param) => base.ClearItems()), null);
-        }
-
-        protected override void InsertItem(int index, T item)
-        {
-            this.SynchronizationContext.Send(new SendOrPostCallback((param) => base.InsertItem(index, item)), null);
-        }
-
-        protected override void RemoveItem(int index)
-        {
-            this.SynchronizationContext.Send(new SendOrPostCallback((param) => base.RemoveItem(index)), null);
-        }
-
         protected override void SetItem(int index, T item)
         {
-            this.SynchronizationContext.Send(new SendOrPostCallback((param) => base.SetItem(index, item)), null);
-        }
-
-        protected override void MoveItem(int oldIndex, int newIndex)
-        {
-            this.SynchronizationContext.Send(new SendOrPostCallback((param) => base.MoveItem(oldIndex, newIndex)), null);
+            SynchronizationContext.Send(new SendOrPostCallback((param) => base.SetItem(index, item)), null);
         }
         public void ChangeItem(int index, T item)
         {

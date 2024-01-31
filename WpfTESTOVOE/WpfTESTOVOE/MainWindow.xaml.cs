@@ -25,13 +25,13 @@ namespace WpfTESTOVOE
     /// </summary>
     public partial class MainWindow : Window, IMainWindowsCodeBehind
     {
-        DataBaseContent view1;
-        DataBaseTableContent view2;
-        DataBaseExport view3;
-        DataBaseImport view4;
+        DataBaseContent pageContent;
+        DataBaseTableContent pageTableContent;
+        DataBaseExport pageExport;
+        DataBaseImport pageImport;
         public MainWindow()
         {
-            view1 = new DataBaseContent();
+            pageContent = new DataBaseContent();
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
         }
@@ -51,30 +51,30 @@ namespace WpfTESTOVOE
             switch (typeView)
             {
                 case ViewType.DataBaseContent:
-                    view1 = new DataBaseContent();
-                    OutputView.Content = view1;
+                    pageContent = new DataBaseContent();
+                    OutputView.Content = pageContent;
                     break;
             }
             
             switch (typeView)
             {
                 case ViewType.DataBaseTableContent:
-                    view2 = new DataBaseTableContent();
-                    OutputView.Content = view2;
+                    pageTableContent = new DataBaseTableContent();
+                    OutputView.Content = pageTableContent;
                     break;
             }
             switch (typeView)
             {
                 case ViewType.DataBaseExport:
-                    view3 = new DataBaseExport();
-                    OutputView.Content = view3;
+                    pageExport = new DataBaseExport();
+                    OutputView.Content = pageExport;
                     break;
             }
             switch (typeView)
             {
                 case ViewType.DataBaseImport:
-                    view4 = new DataBaseImport();
-                    OutputView.Content = view4;
+                    pageImport = new DataBaseImport();
+                    OutputView.Content = pageImport;
                     break;
             }
         }

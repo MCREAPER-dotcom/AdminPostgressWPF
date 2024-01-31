@@ -80,39 +80,33 @@ namespace WpfTESTOVOE.Pages
         }
         private async void ExportData(object sender, RoutedEventArgs e)
         {
-            if (exportelements.Count > 0)
+            if (exportelements.Count <= 0)
+                MessageBox.Show($"exportelements.Count {exportelements.Count}");
+            else
+            {
                 try
                 {
-                    int i = 0;
-                    var str = "";
-                    if (Threadcount.Text == "" || Threadcount.Text == null)
-                        str = "1";
-                    else
-                        str = Threadcount.Text;
-                    if (int.TryParse(str, out i))
+                    var threadnum = 1;
+                    if (Threadcount.Text != "" && Threadcount.Text != null)
+                        threadnum = Convert.ToInt32(Threadcount.Text);
+                    if (threadnum <= 0)
                     {
-                        if (Convert.ToInt32(str) > 0)
-                        {
-                            int index = 0;
-                            ThreadPool.SetMaxThreads(Convert.ToInt32(str), Convert.ToInt32(str));
-                            foreach (var tempdata in exportelements)
-                            {
-                                ThreadPool.QueueUserWorkItem((state) => ImportExportExt.RecordFile($"{tempdata.elements}", exportelements, exportelements.ElementAt(index++)));
-                            }
-                        }
-                        else
-                            MessageBox.Show("Число меньше 0");
+                        MessageBox.Show("Число меньше 0");
                     }
                     else
-                        MessageBox.Show("число потоков не соответствует числу");
+                    {
+                        int index = 0;
+                        ThreadPool.SetMaxThreads(threadnum, threadnum);
+                        foreach (var tempdata in exportelements)
+                        {
+                            ThreadPool.QueueUserWorkItem((state) => ImportExportExt.RecordFileAsync($"{tempdata.elements}", exportelements, exportelements.ElementAt(index++)));
+                        }
+                    }
                 }
                 catch
                 {
                     MessageBox.Show("Error Request");
                 }
-            else
-            {
-                MessageBox.Show($"exportelements.Count {exportelements.Count}");
             }
         }
     }

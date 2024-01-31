@@ -71,7 +71,7 @@ namespace WpfTESTOVOE.Pages
                     int index = 0;
                     ThreadPool.SetMaxThreads(Convert.ToInt32(str), Convert.ToInt32(str));
                     foreach (var element in Importelements)
-                        ThreadPool.QueueUserWorkItem((state) => ImportExportExt.ImpoortFile(element.filePath, element.file, Importelements, Importelements.ElementAt(index++)));
+                        ThreadPool.QueueUserWorkItem((state) => ImportExportExt.ImpoortFileAsync(element.filePath, element.file, Importelements, Importelements.ElementAt(index++)));
                 }
                 else
                     MessageBox.Show("Число меньше 0");
